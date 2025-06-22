@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MiniQ | 3D Portfolio</title>
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.11/build/spline-viewer.js"></script>
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://unpkg.com/@splinetool/viewer@1.10.11/build/spline-viewer.js" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" as="style">
+    
+    <!-- DNS prefetch for external domains -->
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.11/build/spline-viewer.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -27,6 +37,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         
         html {
@@ -39,6 +50,9 @@
             color: var(--light);
             min-height: 100vh;
             line-height: 1.6;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         /* Navigation */
@@ -56,6 +70,7 @@
             border-bottom: 1px solid var(--glass-border);
             transition: var(--transition);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            will-change: transform, background, padding;
         }
         
         nav.scrolled {
@@ -84,7 +99,6 @@
         .logo-img img {
             width: 100px;
             height: 150px;
-            
         }
         
         .logo-text {
@@ -159,7 +173,7 @@
         }
         
         .mobile-menu-btn {
-            display: none; /* Hidden by default */
+            display: none;
             background: transparent;
             border: none;
             color: var(--light);
@@ -185,6 +199,7 @@
             overflow: hidden;
             display: flex;
             align-items: center;
+            will-change: transform;
         }
         
         .robot-container {
@@ -194,25 +209,14 @@
             width: 100%;
             height: 98%;
             z-index: 1;
+            will-change: transform;
         }
         
         /* Hide Spline branding and controls */
-        spline-viewer::part(logo) {
-            display: none !important;
-        }
-        
-        spline-viewer::part(loading) {
-            display: none !important;
-        }
-        
-        spline-viewer::part(loading-container) {
-            display: none !important;
-        }
-        
-        spline-viewer::part(watermark) {
-            display: none !important;
-        }
-        
+        spline-viewer::part(logo),
+        spline-viewer::part(loading),
+        spline-viewer::part(loading-container),
+        spline-viewer::part(watermark),
         spline-viewer::part(toolbar) {
             display: none !important;
         }
@@ -237,7 +241,7 @@
             opacity: 0;
             animation: slideIn 0.8s forwards 0.3s;
             width: 1400px;
-            
+            will-change: transform, opacity;
         }
         
         @keyframes slideIn {
@@ -283,6 +287,7 @@
             font-size: 1rem;
             position: relative;
             overflow: hidden;
+            will-change: transform, box-shadow;
         }
         
         .btn::before {
@@ -354,6 +359,7 @@
             transition: var(--transition);
             transform: translateY(0);
             cursor: pointer;
+            will-change: transform;
         }
         
         .video-container:hover {
@@ -413,6 +419,7 @@
             padding: 40px;
             border: 1px solid var(--glass-border);
             transition: var(--transition);
+            will-change: transform;
         }
         
         .about-content:hover {
@@ -456,6 +463,7 @@
             border-radius: 20px;
             border: 1px solid var(--glass-border);
             transition: var(--transition);
+            will-change: transform;
         }
         
         .founder-section:hover {
@@ -514,6 +522,7 @@
             border: 1px solid var(--glass-border);
             margin: 30px auto 0;
             transition: var(--transition);
+            will-change: transform;
         }
         
         .form-container:hover {
@@ -726,6 +735,7 @@
             transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             opacity: 0;
             visibility: hidden;
+            will-change: transform, opacity;
         }
         
         .mobile-nav.active {
@@ -762,6 +772,7 @@
             transform: translateY(20px);
             opacity: 0;
             transition: all 0.4s ease;
+            will-change: transform, opacity;
         }
         
         .mobile-nav.active .mobile-nav-links a {
@@ -981,8 +992,25 @@
             .video-container {
                 height: 200px;
             }
-          
             
+            /* Optimize videos for mobile */
+            .video-container video {
+                transform: none !important;
+            }
+            
+            /* Disable hover effects on mobile */
+            .video-container:hover {
+                transform: none !important;
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3) !important;
+            }
+            
+            .btn:hover, 
+            .about-content:hover, 
+            .founder-section:hover,
+            .form-container:hover,
+            .social-links a:hover {
+                transform: none !important;
+            }
         }
         
         @media (max-width: 576px) {
@@ -1026,17 +1054,58 @@
             .hero-content p {
                 font-size: 0.9rem;
             }
+            
+            /* Further optimize for small screens */
+            .founder-section {
+                padding: 15px;
+            }
+            
+            .founder-image {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .founder-image img {
+                width: 150px;
+                height: 180px;
+            }
         }
+        
+        /* Performance optimizations */
+        @media (hover: none) {
+            /* Disable hover effects on touch devices */
+            .btn:hover, 
+            .about-content:hover, 
+            .founder-section:hover,
+            .form-container:hover,
+            .social-links a:hover,
+            .video-container:hover {
+                transform: none !important;
+                box-shadow: none !important;
+            }
+            
+            .btn::before {
+                display: none;
+            }
+        }
+        
         /* Only adding smooth scrolling CSS */
         html {
             scroll-behavior: smooth;
-            scroll-padding-top: 80px; /* Space for fixed nav */
+            scroll-padding-top: 80px;
         }
         
         /* For browsers that don't support smooth scrolling */
         @media (prefers-reduced-motion: reduce) {
             html {
                 scroll-behavior: auto;
+            }
+            
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
             }
         }
         
@@ -1045,6 +1114,9 @@
             scroll-margin-top: 80px;
             transition: scroll-margin-top 0.3s ease;
         }
+        
+        /* Optimize video loading */
+       
     </style>
 </head>
 <body>
@@ -1052,7 +1124,7 @@
     <nav>
         <a href="#home" class="logo">
             <div class="logo-img">
-                <img src="logo.png" alt="MiniQ Logo">
+                <img src="logo.png" alt="MiniQ Logo" loading="lazy">
             </div>
         </a>
         <div class="nav-links">
@@ -1063,16 +1135,15 @@
             <a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
         </div>
         
-        <!-- This button will now only show on mobile -->
         <button class="mobile-menu-btn">
             <i class="fas fa-bars"></i>
         </button>
     </nav>
+    
     <!-- Mobile Navigation -->
     <div class="mobile-nav">
         <button class="close-menu">
             <i class="fas fa-times"></i>
-            
         </button>
         <div class="mobile-nav-links">
             <a href="#home" class="nav-link active"><i class="fas fa-home"></i> Home</a>
@@ -1114,7 +1185,7 @@
         <div class="video-gallery">
             <!-- Project 1 -->
             <div class="video-container" data-video-src="1 video.mp4">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="1 video.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1126,7 +1197,7 @@
             
             <!-- Project 2 -->
             <div class="video-container" data-video-src="video 2.mp4">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="video 2.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1138,7 +1209,7 @@
             
             <!-- Project 3 -->
             <div class="video-container" data-video-src="video 3.mp4">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="video 3.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1150,7 +1221,7 @@
             
             <!-- Project 4 -->
             <div class="video-container" data-video-src="video 4.mp4">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="video 4.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1162,7 +1233,7 @@
             
             <!-- Project 5 -->
             <div class="video-container" data-video-src="video 5.mp4">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="video 5.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1174,7 +1245,7 @@
             
             <!-- Project 6 -->
             <div class="video-container" data-video-src="video 6.mp4">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="video 6.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1186,7 +1257,7 @@
             
             <!-- Project 7 -->
             <div class="video-container" data-video-src="video7.mp4">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="video7.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1198,7 +1269,7 @@
             
             <!-- Project 8 -->
             <div class="video-container" data-video-src="video8.mp4">
-                <video autoplay muted loop playsinline>
+                <video autoplay muted loop playsinline preload="metadata">
                     <source src="video8.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1216,7 +1287,7 @@
             <button class="close-video">
                 <i class="fas fa-times"></i>
             </button>
-            <video controls autoplay>
+            <video controls>
                 Your browser does not support the video tag.
             </video>
         </div>
@@ -1231,11 +1302,9 @@
         
         <div class="about-container">
             <div class="about-content">
-                
-                
                 <div class="founder-section">
                     <div class="founder-image">
-                        <img src="himesh.jpg" alt="Himesh Jain - Founder">
+                        <img src="himesh.jpg" alt="Himesh Jain - Founder" loading="lazy">
                     </div>
                     <div class="founder-info">
                         <h4>Himesh Jani</h4>
@@ -1318,7 +1387,6 @@
                 <p style="color: var(--gray); line-height: 1.7; margin-bottom: 20px;">Transforming digital experiences with cutting-edge 3D technology and immersive solutions.</p>
                 <div class="social-links">
                     <a href="https://www.instagram.com/miniq_ai?igsh=MTlmaHE3bWZtZXI0Ng=="><i class="fab fa-instagram"></i></a>
-                    
                 </div>
             </div>
             <div class="footer-col">
@@ -1465,12 +1533,16 @@
             
             // Ensure all videos in gallery play
             document.querySelectorAll('.video-container video').forEach(video => {
-                video.play();
+                video.play().catch(e => {
+                    // Autoplay was prevented, mute video and try again
+                    video.muted = true;
+                    video.play();
+                });
             });
         });
         
         // Scroll detection for nav
-        window.addEventListener('scroll', function() {
+        function handleScroll() {
             const nav = document.querySelector('nav');
             if (window.scrollY > 50) {
                 nav.classList.add('scrolled');
@@ -1495,7 +1567,14 @@
                     link.classList.add('active');
                 }
             });
-        });
+        }
+        
+        // Throttle scroll events for better performance
+        let isScrolling;
+        window.addEventListener('scroll', function() {
+            window.clearTimeout(isScrolling);
+            isScrolling = setTimeout(handleScroll, 50);
+        }, false);
         
         // WhatsApp form submission
         document.getElementById('contact-form').addEventListener('submit', function(e) {
@@ -1543,7 +1622,8 @@ _This message was sent via MiniQ website_`;
             // Reset form
             this.reset();
         });
-            // Enhanced smooth scrolling with offset for fixed nav
+        
+        // Enhanced smooth scrolling with offset for fixed nav
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1598,7 +1678,41 @@ _This message was sent via MiniQ website_`;
                 link.classList.remove('active');
             });
             document.querySelector('.nav-link[href="#home"]').classList.add('active');
-        })
+        });
+        
+        // Optimize video loading for mobile
+        function optimizeVideos() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                // Only play videos when they're visible
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            video.play().catch(e => {
+                                video.muted = true;
+                                video.play();
+                            });
+                        } else {
+                            video.pause();
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                observer.observe(video);
+            });
+        }
+        
+        // Run optimizations when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            optimizeVideos();
+            
+            // Load videos after page is loaded
+            setTimeout(() => {
+                document.querySelectorAll('video').forEach(video => {
+                    video.load();
+                });
+            }, 1000);
+        });
     </script>
 </body>
 </html>
