@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniQ | 3D Portfolio</title>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.11/build/spline-viewer.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            
+            --dark: #0f172a;
+            --darker: #0a0f1f;
+            --light: #f1f5f9;
+            --gray: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            overflow-x: hidden;
+            background: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: var(--transition);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        nav.scrolled {
+            padding: 15px 5%;
+            background: rgba(10, 15, 31, 0.98);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .logo-img {
+            width: 100px;
+            height: 50px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-img img {
+            width: 100px;
+            height: 150px;
+            
+        }
+        
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .logo-text span {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            position: relative;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+            font-size: 16px;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--light);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        .menu-graphic {
+            position: absolute;
+            top: -10px;
+            right: -20px;
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.2;
+            animation: pulse 3s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.2); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 0.2; }
+        }
+        
+        .mobile-menu-btn {
+            display: none; /* Hidden by default */
+            background: transparent;
+            border: none;
+            color: var(--light);
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 101;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .mobile-menu-btn:hover {
+            background: var(--glass);
+        }
+        
+        /* Home Section with 3D Robot */
+        #home {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        
+        .robot-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 98%;
+            z-index: 1;
+        }
+        
+        /* Hide Spline branding and controls */
+        spline-viewer::part(logo) {
+            display: none !important;
+        }
+        
+        spline-viewer::part(loading) {
+            display: none !important;
+        }
+        
+        spline-viewer::part(loading-container) {
+            display: none !important;
+        }
+        
+        spline-viewer::part(watermark) {
+            display: none !important;
+        }
+        
+        spline-viewer::part(toolbar) {
+            display: none !important;
+        }
+        
+        .content-overlay {
+            position: relative;
+            z-index: 3;
+            margin: 0 auto;
+            padding: 0 5%;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .hero-content {
+            margin-top: 380px;
+            padding: 40px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            transform: translateX(-50px);
+            opacity: 0;
+            animation: slideIn 0.8s forwards 0.3s;
+            width: 1400px;
+            
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .hero-content h1 {
+            font-size: clamp(1.5rem, 3vw, 4rem);
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--light), #cbd5e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .hero-content p {
+            font-size: clamp(1rem, 1.5vw, 1.1rem);
+            margin-bottom: 30px;
+            color: var(--gray);
+            line-height: 1.7;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
+        
+        /* Gallery Section */
+        #gallery {
+            padding: 120px 5%;
+            background: var(--darker);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+        
+        .section-header h2 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--light), #cbd5e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .section-header p {
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            color: var(--gray);
+            line-height: 1.7;
+        }
+        
+        .video-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .video-container {
+            position: relative;
+            height: 250px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+            transform: translateY(0);
+            cursor: pointer;
+        }
+        
+        .video-container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .video-container:hover video {
+            transform: scale(1.05);
+        }
+        
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+        }
+        
+        .video-overlay h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .video-overlay p {
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+        
+        /* About Section */
+        #about {
+            padding: 120px 5%;
+            background: var(--darker);
+        }
+        
+        .about-container {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .about-content {
+            flex: 1;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+        
+        .about-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .about-content h3 {
+            font-size: clamp(1.8rem, 3vw, 2rem);
+            margin-bottom: 20px;
+            color: var(--light);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .about-content h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .about-content p {
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-size: clamp(0.95rem, 1.2vw, 1rem);
+        }
+        
+        .founder-section {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-top: 40px;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+        
+        .founder-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .founder-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 3px solid var(--primary);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .founder-image img {
+            width: 200PX;
+            height: 230PX;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .founder-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .founder-info h4 {
+            font-size: clamp(1.5rem, 2vw, 1.8rem);
+            margin-bottom: 10px;
+            color: var(--light);
+        }
+        
+        .founder-info .position {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        /* Contact Section */
+        #contact {
+            padding: 120px 5%;
+            background: var(--dark);
+        }
+        
+        .form-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 50px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            margin: 30px auto 0;
+            transition: var(--transition);
+        }
+        
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: var(--light);
+            font-size: 16px;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(15, 23, 42, 0.5);
+            color: var(--light);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: rgba(15, 23, 42, 0.7);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 60px 5% 40px;
+            background: var(--darker);
+            border-top: 1px solid var(--glass-border);
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+        
+        .footer-col h3 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: var(--light);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+        
+        .footer-links a {
+            text-decoration: none;
+            color: var(--gray);
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--light);
+            transform: translateX(5px);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--glass);
+            color: var(--light);
+            font-size: 18px;
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        /* Contact Info Styles */
+        .contact-info {
+            list-style: none;
+        }
+        
+        .contact-info li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .contact-info i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            min-width: 24px;
+            margin-top: 4px;
+        }
+        
+        .contact-info a {
+            color: var(--light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .contact-info a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Mobile Navigation - Updated Style */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--darker);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .mobile-nav.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            width: 100%;
+            padding: 0 20px;
+        }
+        
+        .mobile-nav-links a {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            text-decoration: none;
+            color: var(--light);
+            font-weight: 600;
+            padding: 15px 30px;
+            border-radius: 15px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+        
+        .mobile-nav.active .mobile-nav-links a {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .mobile-nav.active .mobile-nav-links a:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+        .mobile-nav.active .mobile-nav-links a:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+        .mobile-nav.active .mobile-nav-links a:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+        .mobile-nav.active .mobile-nav-links a:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+        
+        .mobile-nav-links a:hover {
+            background: var(--primary);
+            transform: translateY(-5px) !important;
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .mobile-nav-links a i {
+            font-size: 1.2em;
+        }
+        
+        .close-menu {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: none;
+        }
+        
+        .close-menu:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: var(--primary-dark);
+        }
+        
+        /* Video Modal for Fullscreen */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .video-modal.active {
+            display: flex;
+        }
+        
+        .video-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+        }
+        
+        .video-modal-content video {
+            width: 100%;
+            height: auto;
+            max-height: 90vh;
+            border-radius: 15px;
+            outline: none;
+        }
+        
+        .close-video {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .close-video:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .about-container {
+                flex-direction: column;
+            }
+            
+            .founder-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .founder-image {
+                margin: 0 auto;
+            }
+            
+            .hero-content {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .video-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .content-overlay {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-content {
+                margin-top: 70vh;
+            }
+            
+            .section-header h2 {
+                font-size: 3rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 5%;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2.5rem;
+            }
+            
+            .form-container {
+                padding: 30px;
+            }
+            
+            .founder-section {
+                padding: 20px;
+            }
+            
+            .hero-content {
+                margin-top: 60vh;
+                padding: 20px;
+                width: 100%;
+                max-width: 100%;
+                transform: none;
+                animation: none;
+                opacity: 1;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+                margin-bottom: 20px;
+            }
+            
+            .btn {
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+            
+            .video-gallery {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .video-container {
+                height: 200px;
+            }
+          
+            
+        }
+        
+        @media (max-width: 576px) {
+            .logo-text {
+                font-size: 1.8rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2rem;
+            }
+            
+            .founder-info h4 {
+                font-size: 1.5rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-content {
+                margin-top: 50vh;
+                padding: 15px;
+            }
+            
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero-content p {
+                font-size: 0.9rem;
+            }
+        }
+        /* Only adding smooth scrolling CSS */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px; /* Space for fixed nav */
+        }
+        
+        /* For browsers that don't support smooth scrolling */
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+        
+        /* Add transition for all scrollable sections */
+        section {
+            scroll-margin-top: 80px;
+            transition: scroll-margin-top 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="#home" class="logo">
+            <div class="logo-img">
+                <img src="logo.png" alt="MiniQ Logo">
+            </div>
+        </a>
+        <div class="nav-links">
+            <div class="menu-graphic"></div>
+            <a href="#home" class="nav-link active"><i class="fas fa-home"></i> Home</a>
+            <a href="#gallery" class="nav-link"><i class="fas fa-images"></i> Gallery</a>
+            <a href="#about" class="nav-link"><i class="fas fa-users"></i> About</a>
+            <a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
+        </div>
+        
+        <!-- This button will now only show on mobile -->
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <button class="close-menu">
+            <i class="fas fa-times"></i>
+            
+        </button>
+        <div class="mobile-nav-links">
+            <a href="#home" class="nav-link active"><i class="fas fa-home"></i> Home</a>
+            <a href="#gallery" class="nav-link"><i class="fas fa-images"></i> Gallery</a>
+            <a href="#about" class="nav-link"><i class="fas fa-users"></i> About</a>
+            <a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
+        </div>
+    </div>
+    
+    <!-- Home Section -->
+    <section id="home">
+        <div class="robot-container">
+            <spline-viewer 
+                url="https://prod.spline.design/MnrLABcgt4ovwX9L/scene.splinecode"
+                events-target="global"
+                loading-anim="true"
+                hide-ui="true"
+            ></spline-viewer>
+        </div>
+        <div class="content-overlay">
+            <div class="hero-content">
+                <h1>Transform Your Digital Experience</h1>
+                <p>MiniQ brings your ideas to life with cutting-edge 3D visualization technology. Explore, interact, and innovate with our immersive platform that pushes the boundaries of digital creativity.</p>
+                <a href="#gallery" class="btn">
+                    <i class="fas fa-play"></i>
+                    Explore Our Gallery
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Gallery Section -->
+    <section id="gallery">
+        <div class="section-header">
+            <h2>Our Creative Gallery</h2>
+            <p>Explore our collection of immersive 3D and motion design projects</p>
+        </div>
+        
+        <div class="video-gallery">
+            <!-- Project 1 -->
+            <div class="video-container" data-video-src="1 video.mp4">
+                <video autoplay muted loop playsinline>
+                    <source src="1 video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Visual Storytelling</h4>
+                    <p>3D animation showcase</p>
+                </div>
+            </div>
+            
+            <!-- Project 2 -->
+            <div class="video-container" data-video-src="video 2.mp4">
+                <video autoplay muted loop playsinline>
+                    <source src="video 2.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>AI Creation</h4>
+                    <p>Generative design exploration</p>
+                </div>
+            </div>
+            
+            <!-- Project 3 -->
+            <div class="video-container" data-video-src="video 3.mp4">
+                <video autoplay muted loop playsinline>
+                    <source src="video 3.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Brand Identity</h4>
+                    <p>Corporate visual identity</p>
+                </div>
+            </div>
+            
+            <!-- Project 4 -->
+            <div class="video-container" data-video-src="video 4.mp4">
+                <video autoplay muted loop playsinline>
+                    <source src="video 4.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Creative Direction</h4>
+                    <p>Artistic vision implementation</p>
+                </div>
+            </div>
+            
+            <!-- Project 5 -->
+            <div class="video-container" data-video-src="video 5.mp4">
+                <video autoplay muted loop playsinline>
+                    <source src="video 5.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Concept Design</h4>
+                    <p>Product visualization</p>
+                </div>
+            </div>
+            
+            <!-- Project 6 -->
+            <div class="video-container" data-video-src="video 6.mp4">
+                <video autoplay muted loop playsinline>
+                    <source src="video 6.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Futuristic Ads</h4>
+                    <p>Next-gen advertising</p>
+                </div>
+            </div>
+            
+            <!-- Project 7 -->
+            <div class="video-container" data-video-src="video7.mp4">
+                <video autoplay muted loop playsinline>
+                    <source src="video7.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Motion Graphics</h4>
+                    <p>Dynamic visual elements</p>
+                </div>
+            </div>
+            
+            <!-- Project 8 -->
+            <div class="video-container" data-video-src="video8.mp4">
+                <video autoplay muted loop playsinline>
+                    <source src="video8.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay">
+                    <h4>Virtual Reality</h4>
+                    <p>Immersive experiences</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Video Modal for Fullscreen -->
+    <div class="video-modal">
+        <div class="video-modal-content">
+            <button class="close-video">
+                <i class="fas fa-times"></i>
+            </button>
+            <video controls autoplay>
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+    
+    <!-- About Section -->
+    <section id="about">
+        <div class="section-header">
+            <h2>About MiniQ</h2>
+            <p>Learn about our journey and connect with us</p>
+        </div>
+        
+        <div class="about-container">
+            <div class="about-content">
+                
+                
+                <div class="founder-section">
+                    <div class="founder-image">
+                        <img src="himesh.jpg" alt="Himesh Jain - Founder">
+                    </div>
+                    <div class="founder-info">
+                        <h4>Himesh Jani</h4>
+                        <div class="position">Founder & Creative Director</div>
+                        <p>Himesh Jain is an AI visual creator at the forefront of next-gen advertising. As the founder of Miniq, he blends technology, experimentation, and storytelling to craft powerful visuals for brands.</p>
+                        <p>Currently pursuing Chartered Accountancy at ICAI, he combines structured logic with bold creativity. Every project is a playground for innovative digital craft.</p>
+                        <p>Driven by a mission to empower brands with futuristic visual storytelling. Available for remote work. Based in India.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="section-header">
+            <h2>Get In Touch</h2>
+            <p>Have a project in mind? Reach out to us directly</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="contact-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name <span style="color: var(--primary);">*</span></label>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address <span style="color: var(--primary);">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" id="company" name="company" placeholder="Enter your company name">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="service">Service Interest</label>
+                        <select id="service" name="service">
+                            <option value="">Select a service</option>
+                            <option value="3d-modeling">Single AI Visual (Static/One-shot CGI-style Animation)</option>
+                            <option value="animation">Full AI-Powered Video Ad (with cuts, edits & storytelling)</option>
+                            <option value="vr">Voiceover (AI)</option>
+                            <option value="consulting">Custom brand animation/logo reveal</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="message">Project Details <span style="color: var(--primary);">*</span></label>
+                        <textarea id="message" name="message" placeholder="Tell us about your project and requirements" required></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="newsletter" name="newsletter" checked>
+                            <label for="newsletter">Subscribe to our newsletter for updates and offers</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn submit-btn">
+                    <i class="fab fa-whatsapp"></i>
+                    Send via WhatsApp
+                </button>
+            </form>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>MiniQ</h3>
+                <p style="color: var(--gray); line-height: 1.7; margin-bottom: 20px;">Transforming digital experiences with cutting-edge 3D technology and immersive solutions.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/miniq_ai?igsh=MTlmaHE3bWZtZXI0Ng=="><i class="fab fa-instagram"></i></a>
+                    
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="#gallery"><i class="fas fa-chevron-right"></i> Gallery</a></li>
+                    <li><a href="#about"><i class="fas fa-chevron-right"></i> About</a></li>
+                    <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Our Services</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> 3D Visualization</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Motion Graphics</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> AI-Powered Ads</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Brand Identity</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Us</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <a href="miniqaiagency@gmail.com">miniqaiagency@gmail.com</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:+917738004227">+91 7738004227</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Mumbai, India</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <p class="copyright">© 2023 MiniQ. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Mobile menu functionality
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileNav = document.querySelector('.mobile-nav');
+        const closeMenuBtn = document.querySelector('.close-menu');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileNav.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeMenuBtn.addEventListener('click', function() {
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileNav.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+        
+        // Video modal functionality
+        const videoModal = document.querySelector('.video-modal');
+        const videoContainers = document.querySelectorAll('.video-container');
+        const closeVideoBtn = document.querySelector('.close-video');
+        const videoModalContent = document.querySelector('.video-modal-content video');
+        
+        // Open video in fullscreen modal
+        videoContainers.forEach(container => {
+            container.addEventListener('click', function() {
+                const videoSrc = this.getAttribute('data-video-src');
+                videoModalContent.src = videoSrc;
+                videoModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                videoModalContent.play();
+            });
+        });
+        
+        // Close video modal
+        closeVideoBtn.addEventListener('click', function() {
+            videoModal.classList.remove('active');
+            document.body.style.overflow = '';
+            videoModalContent.pause();
+        });
+        
+        // Close video modal when clicking outside
+        videoModal.addEventListener('click', function(e) {
+            if (e.target === videoModal) {
+                videoModal.classList.remove('active');
+                document.body.style.overflow = '';
+                videoModalContent.pause();
+            }
+        });
+        
+        // Close video modal with ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && videoModal.classList.contains('active')) {
+                videoModal.classList.remove('active');
+                document.body.style.overflow = '';
+                videoModalContent.pause();
+            }
+        });
+        
+        // Navigation functionality
+        document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(element => {
+            element.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                // Scroll to target section
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Update nav links
+                document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+        
+        // Hide Spline controls completely
+        document.addEventListener('DOMContentLoaded', function() {
+            const splineViewer = document.querySelector('spline-viewer');
+            
+            // Hide Spline controls using shadow DOM manipulation
+            setTimeout(() => {
+                if (splineViewer && splineViewer.shadowRoot) {
+                    const toolbar = splineViewer.shadowRoot.querySelector('.toolbar');
+                    const watermark = splineViewer.shadowRoot.querySelector('.watermark');
+                    const loading = splineViewer.shadowRoot.querySelector('.loading');
+                    
+                    if (toolbar) toolbar.style.display = 'none';
+                    if (watermark) watermark.style.display = 'none';
+                    if (loading) loading.style.display = 'none';
+                }
+            }, 2000);
+            
+            // Ensure all videos in gallery play
+            document.querySelectorAll('.video-container video').forEach(video => {
+                video.play();
+            });
+        });
+        
+        // Scroll detection for nav
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+            
+            // Highlight active section in nav
+            const sections = document.querySelectorAll('section');
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= sectionTop - 100) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // WhatsApp form submission
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value || 'Not provided';
+            const company = document.getElementById('company').value || 'Not provided';
+            const service = document.getElementById('service').value || 'Not specified';
+            const message = document.getElementById('message').value;
+            const newsletter = document.getElementById('newsletter').checked ? 'Yes' : 'No';
+            
+            // Format the message for WhatsApp
+            const whatsappMessage = 
+                `📞 *New Enquiry For You Sir* 📞
+                
+*Name:* ${name}
+*Email:* ${email}
+*Phone:* ${phone}
+*Company:* ${company}
+
+*Service Interest:* ${service}
+*Newsletter Subscription:* ${newsletter}
+
+*Project Details:*
+${message}
+
+_This message was sent via MiniQ website_`;
+            
+            // Encode the message for URL
+            const encodedMessage = encodeURIComponent(whatsappMessage);
+            
+            // WhatsApp API URL with your admin's phone number (7738004227)
+            const adminPhoneNumber = "917738004227";
+            const whatsappUrl = `https://wa.me/${adminPhoneNumber}?text=${encodedMessage}`;
+            
+            // Open WhatsApp in a new tab
+            window.open(whatsappUrl, '_blank');
+            
+            // Show confirmation message
+            alert("Your message has been prepared for WhatsApp. Please complete the sending process.");
+            
+            // Reset form
+            this.reset();
+        });
+            // Enhanced smooth scrolling with offset for fixed nav
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetSection = document.querySelector(targetId);
+                if(!targetSection) return;
+                
+                // Calculate scroll position with nav offset
+                const navHeight = document.querySelector('nav').offsetHeight;
+                const targetPosition = targetSection.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                
+                // Use smooth scrolling
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Close mobile menu if open
+                if(mobileNav.classList.contains('active')) {
+                    mobileNav.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+        
+        // Add smooth scrolling for logo
+        document.querySelector('.logo').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetSection = document.querySelector('#home');
+            if(!targetSection) return;
+            
+            const navHeight = document.querySelector('nav').offsetHeight;
+            const targetPosition = targetSection.getBoundingClientRect().top + window.pageYOffset - navHeight;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link, .mobile-nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector('.nav-link[href="#home"]').classList.add('active');
+        })
+    </script>
+</body>
+</html>
